@@ -5,7 +5,7 @@ from flask import Flask
 
 from config import base_config
 from app.auth import auth
-from lib.database import db
+from app.database import db
 from flask_script import Manager
 from flask_migrate import MigrateCommand
 from lib.extensions import mail, migrate, bcrypt, rq

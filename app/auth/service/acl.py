@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from app.auth.models import VSAcl
-from lib.database import DataTable
+from app.database import DataTable
 import json
 
 

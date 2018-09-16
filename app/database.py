@@ -137,3 +137,7 @@ class DataTable(object):
     def paginate(self, page, limit):
         """Paginate the query based on a page & limit."""
         self.query = self.query.paginate(page, limit)
+
+    def items(self):
+        """.Return the query items."""
+        return self.query.items

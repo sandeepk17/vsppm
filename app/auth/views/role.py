@@ -31,7 +31,7 @@ def role_list():
 
 @auth.route('/role/edit/<int:id>', methods=['PUT'])
 @jwt_required
-def use_edit(id):
+def role_edit(id):
     result, data, message = RoleService.update(id=id, request=request)
     return {
         'result': result,

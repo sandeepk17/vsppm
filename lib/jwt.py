@@ -85,7 +85,6 @@ def jwt_required_response_form(result, data='', message=''):
 def jwt_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
-        print(request.headers)
         token = request.headers.get('X-Token')
         if token:
             r, data = JwtDecoder(token).get('data')
@@ -108,7 +107,6 @@ def jwt_required(fn):
 def jwt_required_payload(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
-        print(request.headers)
         token = request.headers.get('X-Token')
         if token:
             r, data = JwtDecoder(token).get('data')

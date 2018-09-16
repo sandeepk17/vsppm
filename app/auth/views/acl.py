@@ -31,7 +31,7 @@ def acl_list():
 
 @auth.route('/acl/edit/<int:id>', methods=['PUT'])
 @jwt_required
-def use_edit(id):
+def acl_edit(id):
     result, data, message = AclService.update(id=id, request=request)
     return {
         'result': result,

@@ -17,15 +17,15 @@ def login():
     })
 
 
-@auth.route('/user/logout', methods=['GET'])
+@auth.route('/user/logout', methods=['POST'])
 @jwt_required
 def logout():
-    result, data, message = UserService.logout(username='')
-    return jsonify({
+    result, data, message = UserService.logout()
+    return {
         'result': result,
         'data': data,
         'message': message
-    })
+    }
 
 
 @auth.route('/user/register', methods=['POST'])
@@ -62,7 +62,7 @@ def user_list():
 
 @auth.route('/user/edit/<int:id>', methods=['PUT'])
 @jwt_required
-def use_edit(id):
+def user_edit(id):
     result, data, message = UserService.update(id=id, request=request)
     return {
         'result': result,
@@ -86,17 +86,6 @@ def user_delete(id):
 @jwt_required
 def user_create():
     result, data, message = UserService.create(request=request)
-    return {
-        'result': result,
-        'data': data,
-        'message': message
-    }
-
-
-@auth.route('/user/role', methods=['PUT'])
-@jwt_required
-def user_role():
-    result, data, message = UserService.update_role(request=request)
     return {
         'result': result,
         'data': data,

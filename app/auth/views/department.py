@@ -31,7 +31,7 @@ def department_list():
 
 @auth.route('/department/edit/<int:id>', methods=['PUT'])
 @jwt_required
-def use_edit(id):
+def department_edit(id):
     result, data, message = DepartmentService.update(id=id, request=request)
     return {
         'result': result,

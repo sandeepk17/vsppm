@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from app.auth.models import VSRole
-from lib.database import DataTable
 import json
 
 
@@ -16,7 +15,10 @@ class RoleService:
         :param id: 角色id
         :return:
         """
-        return 20000, VSRole.query.filter_by(id=id).first_or_404(), '角色基本信息查询成功'
+        role = VSRole.query.filter_by(id=id).first_or_404()
+        if role:
+            return 20000, role.to_dict(), '角色基本信息查询成功'
+        return 20000, None, '角色基本信息不存在'
 
     @classmethod
     def list(cls, request) -> (bool, dict, str):
@@ -24,17 +26,12 @@ class RoleService:
         :param request: http request
         :return:
         """
-        datatable = DataTable(
-            model=VSRole,
-            columns=[VSRole.id, VSRole.name],
-            sortable=[],
-            searchable=[],
-            filterable=[VSRole.active],
-            limits=[25, 50, 100],
-            request=request
-        )
+        data = []
+        roles = VSRole.query.all()
+        for role in roles:
+            data.append(role.to_dict())
 
-        return 20000, datatable.query.items(), '角色信息列表查询成功'
+        return 20000, data, '角色基本信息列表查询成功'
 
     @classmethod
     def update(cls, id: int, request) -> (bool, dict, str):
@@ -48,7 +45,12 @@ class RoleService:
             args_data = json.loads(request.data)
 
         role = VSRole.query.filter_by(id=id).first_or_404()
-        role.update(**args_data)
+        if role:
+            new_role = role.update(**args_data)
+        else:
+            return 50000, {}, '角色基本信息更新失败'
+
+        return 20000, new_role.to_dict(), '角色基本信息更新成功'
 
     @classmethod
     def create(cls, request) -> (bool, dict, str):
@@ -61,7 +63,11 @@ class RoleService:
         else:
             args_data = json.loads(request.data)
 
-        return 20000, VSRole.create(**args_data), '角色创建成功'
+        role = VSRole.create(**args_data)
+        if role:
+            return 20000, role.to_dict(), '角色基本信息创建成功'
+
+        return 50000, None, '角色基本信息创建失败'
 
     @classmethod
     def delete(cls, id: int) -> (bool, dict, str):
@@ -69,5 +75,8 @@ class RoleService:
         :param id 角色id
         """
         role = VSRole.query.filter_by(id=id).first_or_404()
-        return 20000, role.delete(), '角色基本信息删除成功'
+        if role:
+            return 20000, role.delete(), '角色基本信息删除成功'
+
+        return 50000, None, '角色基本信息删除失败'
 
