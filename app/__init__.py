@@ -5,6 +5,7 @@ from flask import Flask
 
 from config import base_config
 from app.auth import auth
+from app.devppm import devppm
 from app.database import db
 from flask_script import Manager
 from flask_migrate import MigrateCommand
@@ -52,6 +53,7 @@ def register_extensions(app):
 def register_blueprints(app):
     """Register blueprints with the Flask application."""
     app.register_blueprint(auth, url_prefix='/api/v1/auth')
+    app.register_blueprint(devppm, url_prefix='/api/v1/devppm')
 
 
 def register_scripts(app):

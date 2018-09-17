@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from app.auth.models import VSUser, VSRole
+from app.auth.models import VSUser
 from app.database import DataTable
 import json
 
@@ -20,20 +20,11 @@ class UserService:
         user = VSUser.query.filter_by(username=username).first_or_404()
         if user:
             data = user.to_dict()
-
-            # 查询部门所属信息
-            data['department'] = {}
-            if user.department:
-                data['department'] = user.department.to_dict()
-
-            # 查询所属角色信息
-            data['role'] = {}
-            if user.role:
-                data['role'] = user.role.to_dict()
+            extra_data = UserService.__extra_info(data, user)
         else:
             return 50000, None, '账户基本信息不存在'
 
-        return 20000, data, '账户基本信息获取成功'
+        return 20000, extra_data, '账户基本信息获取成功'
 
     @classmethod
     def list(cls, request) -> (bool, dict, str):
@@ -56,17 +47,8 @@ class UserService:
         users = table.items()
         for user in users:
             user_dict = user.to_dict()
-            # 查询部门所属信息
-            user_dict['department'] = {}
-            if user.department:
-                user_dict['department'] = user.department.to_dict()
-
-            # 查询所属角色信息
-            user_dict['role'] = {}
-            if user.role:
-                user_dict['role'] = user.role.to_dict()
-
-            data.append(user_dict)
+            extra_user_dict = UserService.__extra_info(user_dict, user)
+            data.append(extra_user_dict)
 
         return 20000, data, '账户信息列表查询成功'
 
@@ -86,18 +68,10 @@ class UserService:
         if user:
             new_user = user.update(**args_data)
             data = new_user.to_dict()
-            # 查询部门所属信息
-            data['department'] = {}
-            if user.department:
-                data['department'] = user.department.to_dict()
-
-            # 查询所属角色信息
-            data['role'] = {}
-            if user.role:
-                data['role'] = user.role.to_dict()
+            extra_data = UserService.__extra_info(data, new_user)
         else:
             return 50000, {}, '账户基本信息更新失败'
-        return 20000, data, '账户信息更新成功'
+        return 20000, extra_data, '账户信息更新成功'
 
     @classmethod
     def create(cls, request) -> (bool, dict, str):
@@ -114,20 +88,10 @@ class UserService:
         user = VSUser.create(**args_data)
         if user:
             data = user.to_dict()
+            extra_data = UserService.__extra_info(data, user)
+            return 20000, extra_data, '账户信息保存成功'
 
-            # 查询部门所属信息
-            data['department'] = {}
-            if user.department:
-                data['department'] = user.department.to_dict()
-
-            # 查询所属角色信息
-            data['role'] = {}
-            if user.role:
-                data['role'] = user.role.to_dict()
-
-            return 20000, data, '账户信息保存成功'
-
-        return 20000, None, '账户信息保存失败'
+        return 50000, None, '账户信息保存失败'
 
     @classmethod
     def delete(cls, id: int) -> (bool, dict, str):
@@ -195,3 +159,17 @@ class UserService:
             args_data = json.loads(request.data)
 
         return 20000, VSUser.create(**args_data), '注册成功'
+
+    @classmethod
+    def __extra_info(cls, data: dict, user):
+        # 查询部门所属信息
+        data['department'] = {}
+        if user.department:
+            data['department'] = user.department.to_dict()
+
+        # 查询所属角色信息
+        data['role'] = {}
+        if user.role:
+            data['role'] = user.role.to_dict()
+
+        return data

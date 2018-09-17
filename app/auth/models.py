@@ -77,6 +77,11 @@ class VSUser(CRUDMixin, db.Model):
 
     # 第一个参数为你要关系到哪个模型的名字,也就是类名
     # db.backref('users')第一个参数users为要反向引用的名字,也可以用其他名字
+    # 正向引用是VSUser访问VSCompany,反向引用是从VSCompany访问表VSUser
+    company = db.relationship('VSCompany', backref=db.backref('users'))
+
+    # 第一个参数为你要关系到哪个模型的名字,也就是类名
+    # db.backref('users')第一个参数users为要反向引用的名字,也可以用其他名字
     # 正向引用是VSUser访问VSDepartment,反向引用是从VSDepartment访问表VSUser
     department = db.relationship('VSDepartment', backref=db.backref('users'))
 
